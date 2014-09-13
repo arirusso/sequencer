@@ -9,29 +9,6 @@ module Sequencer
       @event = Event.new
       @trigger = EventTrigger.new
       @state = State.new
-      @running = false
-    end
-
-    # Toggle start/stop
-    # @return [Boolean]
-    def toggle_start
-      @state.running? ? stop : start
-    end
-
-    # Mark state as running and trigger start event
-    # @return [Boolean]
-    def start    
-      @state.start
-      @event.do_start(@state)
-      true
-    end
-
-    # Mark state as not running and trigger stop event
-    # @return [Boolean]
-    def stop
-      @state.stop
-      @event.do_stop(@state)
-      true            
     end
 
     # Execute a single cycle of sequencing (perform and step)
@@ -58,7 +35,7 @@ module Sequencer
       data = sequence.at(@state.pointer)
       unless data.nil?
         if @trigger.stop?(@state, data)
-          stop
+          @event.do_stop(@state)
           false
         else
           if @trigger.reset?(@state, data)
@@ -72,6 +49,7 @@ module Sequencer
 
   end
 
+  # Shortcut to the Core constructor
   def self.new
     Core.new
   end

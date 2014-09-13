@@ -13,5 +13,3 @@ module TestHelper
   end
          
 end
-
-TestHelper.select_midi_output

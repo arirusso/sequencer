@@ -21,10 +21,6 @@ module Sequencer
 
     # start the clock
     def start(options = {}, &block)     
-      trap "SIGINT", proc { 
-        quiet!        
-        exit
-      }
       @state.start
       @event.do_start(@state)
       yield if block_given?

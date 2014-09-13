@@ -33,7 +33,6 @@ module Sequencer
       sync_immediate if @event.sync?
       @event.do_tick
       sync_enqueued
-      Sync.activate_queued(self)
     end
 
     def initialize_clock(tempo_or_input, resolution, options = {})

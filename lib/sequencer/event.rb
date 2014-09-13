@@ -3,18 +3,9 @@ module Sequencer
   class Event
           
     def initialize
-      @start = nil
       @stop = nil
       @step = nil
       @perform = nil
-    end
-
-    def start(&block)
-      @start = block
-    end
-
-    def do_start(state)
-      !@start.nil? && @start.call(state)
     end
 
     def step(&block)

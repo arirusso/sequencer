@@ -35,6 +35,10 @@ module Sequencer
       true            
     end
 
+    def exec(sequence)
+      perform(sequence) && step(sequence)
+    end
+
     def step(sequence)
       @state.step(sequence.length)
       @event.do_step(@state)

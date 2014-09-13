@@ -14,4 +14,4 @@ module TestHelper
          
 end
 
-TestHelper.select_devices
+TestHelper.select_midi_output

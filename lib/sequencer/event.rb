@@ -2,12 +2,6 @@ module Sequencer
 
   # Events that are fired by the sequencer
   class Event
-          
-    def initialize
-      @step = nil
-      @stop = nil
-      @perform = nil
-    end
 
     # Set the step event
     # @param [Proc] block

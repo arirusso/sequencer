@@ -3,12 +3,6 @@ module Sequencer
   # Callbacks that when evaluate to true, will trigger the corresponding sequencer event
   class EventTrigger
           
-    def initialize
-      @rest = nil
-      @reset = nil
-      @stop = nil
-    end
-
     # Set the reset trigger.  When true, the sequence will go back to step 0
     # @param [Proc] block
     # @return [Proc]

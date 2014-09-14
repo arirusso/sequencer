@@ -1,9 +1,7 @@
 #!/usr/bin/env ruby
 $:.unshift File.join( File.dirname( __FILE__ ), '../lib')
 
-# This example is a sequencer that loops through the array
-# ten times
-#
+# A sequencer that loops through the sequence ten times, printing the current step
 
 require "sequencer"
 
@@ -17,4 +15,4 @@ sequencer.trigger.stop { |state| state.repeat == 10 }
 sequencer.event.perform { |state, data| puts data }
 sequencer.event.stop { clock.stop }
 
-clock.start(:focus => true)
+clock.start(:blocking => true)

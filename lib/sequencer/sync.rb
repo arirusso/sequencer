@@ -23,6 +23,14 @@ module Sequencer
         @sync ||= {}
       end
 
+      # Remove the sync where the given syncable is master
+      # This method doesn't deactivate the sync, only removes it from the collection
+      # @param [Syncable] syncable
+      # @return [Sync]
+      def delete(syncable)
+        sync.delete(syncable)
+      end
+
       def each(&block)
         sync.values.each(&block)
       end
@@ -88,6 +96,14 @@ module Sequencer
     def include?(syncable)
       slave?(syncable) || @master == syncable
     end
+
+    # Deactivate and remove this sync
+    # @return [Boolean]
+    def destroy
+      @slaves.each { |syncable| remove(syncable) }
+      Sync.delete(self)
+      true
+    end
     
     # Stop sending sync to syncable
     # @param [Syncable] syncable
@@ -142,7 +158,6 @@ module Sequencer
     def start_sync(syncable)
       syncable.start(:suppress_clock => true) unless syncable.running?
       syncable.clock.pause
-      syncable.event.do_sync
       true
     end
           

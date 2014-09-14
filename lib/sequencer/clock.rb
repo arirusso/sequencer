@@ -28,7 +28,7 @@ module Sequencer
     # @return [Boolean]
     def start(options = {})
       clock_options = {}
-      clock_options[:background] = true unless !!options[:focus] || !!options[:foreground] || !!options[:blocking]
+      clock_options[:background] = ![:blocking, :focus, :foreground].any? { |k| !!options[k] }
       @clock.start(clock_options) unless !!options[:suppress_clock]
       Thread.abort_on_exception = true
       true

@@ -1,5 +1,6 @@
 module Sequencer 
-  
+
+  # Synchronize clocks
   class Sync
 
     class << self
@@ -32,6 +33,9 @@ module Sequencer
                 :slave_queue, # a queue of sequencers to begin sync for on the next beat
                 :slaves # sequencers that are controlled by the master
     
+    # @param [Syncable] master The master syncable for this sync
+    # @param [Hash] options
+    # @option options [Array<Syncable>, Syncable] :slave Slave syncable(s) to sync (also: :slaves)
     def initialize(master, options = {})
       @master = master
       @slave_queue = {}
@@ -41,12 +45,18 @@ module Sequencer
     # Sync the given syncable to self
     # pass :now => true to queue the sync to happen immediately
     # otherwise the sync will happen at the beginning of self's next sequence
+    # @param [Syncable] syncable
+    # @param [Hash] options
+    # @option options [Boolean] :now Whether to sync now or wait for the next sync point
+    # @return [Boolean]
     def add(syncable, options = {})
-      @slave_queue[syncable] = options[:now] || false
+      @slave_queue[syncable] = !!options[:now]
       true               
     end
     
     # Is the given syncable a slave?
+    # @param [Syncable] syncable
+    # @return [Boolean]
     def slave?(syncable)
       @slaves.include?(syncable) || @slave_queue.include?(syncable)
     end

@@ -128,11 +128,22 @@ module Sequencer
       to_sync.select! { |syncable, sync_now| sync_now } unless !!options[:immediate]
       to_sync.map do |syncable, sync_now|
         @slaves << syncable
-        syncable.start(:suppress_clock => true) unless syncable.running?
-        syncable.clock.pause
+        start_sync(syncable)
         @slave_queue.delete(syncable)
         syncable
       end
+    end
+
+    private
+
+    # Put the given syncable in sync
+    # @param [Syncable] syncable
+    # @return [Boolean]
+    def start_sync(syncable)
+      syncable.start(:suppress_clock => true) unless syncable.running?
+      syncable.clock.pause
+      syncable.event.do_sync
+      true
     end
           
   end

@@ -1,5 +1,6 @@
 module Sequencer 
 
+  # Callbacks that when evaluate to true, will trigger the corresponding sequencer event
   class EventTrigger
           
     def initialize
@@ -8,24 +9,39 @@ module Sequencer
       @stop = nil
     end
 
-    # When true, the sequence will go back to step 0
+    # Set the reset trigger.  When true, the sequence will go back to step 0
+    # @param [Proc] block
+    # @return [Proc]
     def reset(&block)
       @reset = block  
     end
 
-    # When true, no messages will be outputted during that step
+    # Set the rest trigger. When true, no messages will be outputted during that step
+    # @param [Proc] block
+    # @return [Proc]
     def rest(&block)
       @rest = block
     end
 
+    # Whether the reset event should fire
+    # @param [State] state The sequencer state
+    # @param [Object] data Data for the current sequence step 
+    # @return [Boolean]
     def reset?(state, data)
       !@reset.nil? && @reset.call(state, data)
     end
 
+    # Set the stop trigger. When true, the sequencer will stop
+    # @param [Proc] block
+    # @return [Proc]
     def stop(&block)
       @stop = block
     end
 
+    # Whether to fire the stop event
+    # @param [State] state The sequencer state
+    # @param [Object] data Data for the current sequence step 
+    # @return [Boolean]
     def stop?(state, data)
       !@stop.nil? && @stop.call(state, data)
     end

@@ -1,8 +1,8 @@
 #Sequencer
 
-Core sequencer functionality
+Perform a sequence of events at tempo
 
-Used by [midi-sequencer](http://github.com/arirusso/midi-sequencer)
+Also see: [midi-sequencer](http://github.com/arirusso/midi-sequencer)
 
 ## Installation
 

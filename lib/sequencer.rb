@@ -1,6 +1,6 @@
 #
 # Sequencer
-# Core sequencer functionality
+# Perform a sequence of events at tempo
 #
 # (c)2011-2014 Ari Russo
 # Licensed under Apache 2.0

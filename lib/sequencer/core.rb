@@ -50,6 +50,7 @@ module Sequencer
   end
 
   # Shortcut to the Core constructor
+  # @return [Core]
   def self.new
     Core.new
   end

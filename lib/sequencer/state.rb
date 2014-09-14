@@ -9,6 +9,9 @@ module Sequencer
       @repeat = 0
     end
     
+    # Iterate to the next step
+    # @param [Fixnum] length The total length of the sequence
+    # @return [Boolean]
     def step(length)
       if @pointer < length - 1
         @pointer += 1
@@ -18,10 +21,12 @@ module Sequencer
       true
     end
     
-    # Return to the beginning of the sequence
+    # Iterate to the beginning of the sequence
+    # @return [Boolean]
     def reset
       @pointer = 0
       @repeat += 1
+      true
     end
             
   end

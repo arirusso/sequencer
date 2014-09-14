@@ -5,6 +5,7 @@ module Sequencer
           
     def initialize
       @step = nil
+      @stop = nil
       @perform = nil
     end
 
@@ -20,6 +21,20 @@ module Sequencer
     # @return [Boolean]
     def do_step(state)
       !@step.nil? && @step.call(state)
+    end
+
+    # Set the stop event
+    # @param [Proc] block
+    # @return [Proc]
+    def stop(&block)
+      @stop = block
+    end
+
+    # Fire the stop event
+    # @param [State] The sequencer state
+    # @return [Boolean]
+    def do_stop(state)
+      !@stop.nil? && @stop.call(state)
     end
 
     # Set the perform event

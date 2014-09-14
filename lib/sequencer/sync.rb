@@ -62,37 +62,55 @@ module Sequencer
     end
 
     # Is the given syncable master or slave?
+    # @param [Syncable] syncable
+    # @return [Boolean]
     def include?(syncable)
       slave?(syncable) || @master == syncable
     end
     
     # Stop sending sync to syncable
+    # @param [Syncable] syncable
+    # @return [Boolean]
     def remove(syncable)
       @slaves.delete(syncable)
       @slave_queue.delete(syncable)
       syncable.clock.unpause
       true
     end
+
+    # All of the syncables, master and slaves
+    # @return [Array<Syncable>]
+    def syncables
+      [@master] + @slaves
+    end
     
+    # Stop all of the syncables
+    # @return [Boolean]
     def stop
-      @slaves.each(&:stop)
+      syncables.each(&:stop)
+      true
     end
     
+    # Start all of the syncables
+    # @return [Boolean]
     def start
-      @slaves.each(&:start)
+      syncables.each(&:start)
+      true
     end
     
-    # You don't truly hear sync until slaves are moved from the queue to the slaves set 
+    # Sync is not in effect until slaves are moved from the queue to the slaves set by this method
+    # @param [Hash] options
+    # @option options [Boolean] :immediate Whether to sync immediately, or wait for the next cycle
     def activate_queued(options = {})
       updated = []
-      @slave_queue.each do |syncable, sync_now|
-        if sync_now || options[:immediate]
-          @slaves << syncable
-          syncable.start(:suppress_clock => true) unless syncable.running?
-          syncable.clock.pause
-          @slave_queue.delete(syncable)
-          updated << syncable
-        end
+      to_sync = @slave_queue
+      to_sync.select! { |syncable, sync_now| sync_now } unless !!options[:immediate]
+      to_sync.each do |syncable, sync_now|
+        @slaves << syncable
+        syncable.start(:suppress_clock => true) unless syncable.running?
+        syncable.clock.pause
+        @slave_queue.delete(syncable)
+        updated << syncable
       end
       updated
     end

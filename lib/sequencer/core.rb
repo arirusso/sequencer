@@ -22,7 +22,7 @@ module Sequencer
     # @param [Array] sequence
     # @return [Boolean]
     def step(sequence)
-      @state.step(sequence.length)
+      @state.step(:length => sequence.length)
       @event.do_step(@state)
       true
     end

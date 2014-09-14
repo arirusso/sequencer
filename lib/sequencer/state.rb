@@ -10,10 +10,11 @@ module Sequencer
     end
     
     # Iterate to the next step
-    # @param [Fixnum] length The total length of the sequence
+    # @param [Hash] options
+    # @option options [Fixnum] :length The total length of the sequence (for looping)
     # @return [Boolean]
-    def step(length)
-      if @pointer < length - 1
+    def step(options = {})
+      if options[:length].nil? || @pointer < options[:length] - 1
         @pointer += 1
       else
         reset

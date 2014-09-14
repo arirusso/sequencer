@@ -28,7 +28,6 @@ module Sequencer
     def has_sync_slave?(slave)
       !Sequencer::Sync[self].nil? && Sequencer::Sync[self].slave?(slave)
     end
-    alias_method :syncs?, :has_sync_slave?
 
     # Is this clock slave to the given syncable?
     # @param [Syncable] master
@@ -36,14 +35,15 @@ module Sequencer
     def has_sync_master?(master)
       !Sequencer::Sync[master].nil? && Sequencer::Sync[master].slave?(self)
     end
-    alias_method :synced_to?, :has_sync_master?
 
     # Is this syncable sync'd to the given syncable either as master or slave?
     # @param [Syncable] syncable
     # @return [Boolean]
-    def sync?(syncable)
+    def synced_to?(syncable)
       has_sync_slave?(syncable) || has_sync_master?(syncable)
     end
+    alias_method :synced?, :synced_to?
+    alias_method :sync?, :synced_to?
 
     # Add the given syncable as a slave
     # @param [Syncable] slave

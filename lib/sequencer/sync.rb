@@ -3,14 +3,22 @@ module Sequencer
   # Synchronize clocks
   class Sync
 
+    # Class methods for managing sync objects
     class << self
 
       include Enumerable
 
+      # Activate sync for the given master syncable
+      # @param [Syncable] syncable The master to activate sync for
+      # @param [Hash] options
+      # @option options [Boolean] :immediate Whether to force sync immediately, or wait for the next cycle
+      # @return [Array<Syncable>] Syncables for which sync was activated
       def activate_queued(syncable, options = {})
-        !Sync[syncable].nil? && Sync[syncable].activate_queued(options)
+        Sync[syncable].activate_queued(options) unless Sync[syncable].nil?
       end
 
+      # The collection of sync objects
+      # @return [Array<Sync>]
       def sync
         @sync ||= {}
       end
@@ -19,19 +27,32 @@ module Sequencer
         sync.values.each(&block)
       end
 
+      # Get a single sync object based on the given master
+      # @return [Sync]
       def [](master)
         sync[master]
       end
+
+      # Add the given sync
+      # @param [Sync]
+      # @return [Sync]
+      def <<(sync)
+        self.sync[sync.master] = sync
+      end
       
+      # Set the sync object for the given master
+      # @param [Syncable] master The master syncable of the sync
+      # @param [Sync] sync
+      # @return [Sync]
       def []=(master, sync)
         self.sync[master] = sync
       end
 
     end
     
-    attr_reader :master, # the master sequencer that controls the tempo
-                :slave_queue, # a queue of sequencers to begin sync for on the next beat
-                :slaves # sequencers that are controlled by the master
+    attr_reader :master, # the master syncable that controls the tempo
+                :slave_queue, # a queue of syncables to begin sync for on the next cycle
+                :slaves # syncables that are controlled by the master
     
     # @param [Syncable] master The master syncable for this sync
     # @param [Hash] options
@@ -101,18 +122,17 @@ module Sequencer
     # Sync is not in effect until slaves are moved from the queue to the slaves set by this method
     # @param [Hash] options
     # @option options [Boolean] :immediate Whether to sync immediately, or wait for the next cycle
+    # @return [Array<Syncable>] The syncables who sync was activated for
     def activate_queued(options = {})
-      updated = []
       to_sync = @slave_queue
       to_sync.select! { |syncable, sync_now| sync_now } unless !!options[:immediate]
-      to_sync.each do |syncable, sync_now|
+      to_sync.map do |syncable, sync_now|
         @slaves << syncable
         syncable.start(:suppress_clock => true) unless syncable.running?
         syncable.clock.pause
         @slave_queue.delete(syncable)
-        updated << syncable
+        syncable
       end
-      updated
     end
           
   end

@@ -5,10 +5,10 @@ module Sequencer
 
     attr_reader :event, :trigger, :state
 
-    def initialize
+    def initialize(options = {})
       @event = Event.new
       @trigger = EventTrigger.new
-      @state = State.new
+      @state = State.new(:loop => options[:loop])
     end
 
     # Execute a single cycle of sequencing (perform and step)

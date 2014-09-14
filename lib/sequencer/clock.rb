@@ -1,5 +1,6 @@
 module Sequencer 
 
+  # A light wrapper for Topaz::Tempo that adds some event handling
   class Clock
 
     include Syncable
@@ -37,9 +38,7 @@ module Sequencer
     private
 
     def on_tick
-      sync_immediate if @event.sync?
-      @event.do_tick
-      sync_enqueued
+      activate_sync { @event.do_tick }
     end
 
     def initialize_clock(tempo_or_input, resolution, options = {})
@@ -50,18 +49,7 @@ module Sequencer
 
     class Event
 
-      def initialize
-        @sync = nil
-        @tick = nil
-      end
-
-      def sync(&block)
-        @sync = block
-      end
-
-      def sync?
-        !@sync.nil? && @sync.call
-      end
+      include Syncable::Event
 
       def tick(&block)
         @tick = block

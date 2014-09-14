@@ -1,16 +1,29 @@
 module Sequencer 
 
+  # Included by Clock to add syncing capability
   module Syncable
+
+    module Event
+
+      def sync(&block)
+        @sync = block
+      end
+
+      def sync?
+        !@sync.nil? && @sync.call
+      end
+
+    end
 
     # Is this clock master of the given syncable?
     def has_sync_slave?(syncable)
-      !DiamondEngine::Sync[self].nil? && DiamondEngine::Sync[self].slave?(syncable)
+      !Sequencer::Sync[self].nil? && Sequencer::Sync[self].slave?(syncable)
     end
     alias_method :syncs?, :has_sync_slave?
 
     # Is this clock slave to the given syncable?
     def has_sync_master?(syncable)
-      !DiamondEngine::Sync[syncable].nil? && DiamondEngine::Sync[syncable].slave?(self)
+      !Sequencer::Sync[syncable].nil? && Sequencer::Sync[syncable].slave?(self)
     end
     alias_method :synced_to?, :has_sync_master?
 
@@ -21,10 +34,10 @@ module Sequencer
 
     # Send sync to syncable
     def sync_to(syncable, options = {})
-      if DiamondEngine::Sync[self].nil?
-        DiamondEngine::Sync[self] = DiamondEngine::Sync.new(self, options.merge(:slave => syncable))
+      if Sequencer::Sync[self].nil?
+        Sequencer::Sync[self] = Sequencer::Sync.new(self, options.merge(:slave => syncable))
       else
-        DiamondEngine::Sync[self]
+        Sequencer::Sync[self]
       end
     end
     alias_method :sync, :sync_to
@@ -36,19 +49,25 @@ module Sequencer
 
     # Receive sync from syncable
     def sync_to(syncable, options = {})
-      if DiamondEngine::Sync[syncable].nil?
-        DiamondEngine::Sync[syncable] = DiamondEngine::Sync.new(syncable, options.merge(:slave => self))
+      if Sequencer::Sync[syncable].nil?
+        Sequencer::Sync[syncable] = Sequencer::Sync.new(syncable, options.merge(:slave => self))
       else
-        DiamondEngine::Sync[syncable]
+        Sequencer::Sync[syncable]
       end
     end
 
     # Stop receiving sync from syncable
     def unsync_from(syncable)
-      !DiamondEngine::Sync[syncable].nil? && DiamondEngine::Sync[syncable].remove(self)
+      !Sequencer::Sync[syncable].nil? && Sequencer::Sync[syncable].remove(self)
     end
 
     private
+
+    def activate_sync(&block)
+      sync_immediate if @event.sync?
+      yield
+      sync_enqueued
+    end
 
     def sync_enqueued
       Sync.activate_queued(self) 

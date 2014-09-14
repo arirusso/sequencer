@@ -10,21 +10,28 @@ module Sequencer
 
     # @param [Fixnum, UniMIDI::Input] tempo_or_input
     # @param [Hash] options
-    # @option options [Array<UniMIDI::Output>, UniMIDI::Output] :midi_outputs MIDI output device(s)       
+    # @option options [Array<UniMIDI::Output>, UniMIDI::Output] :outputs MIDI output device(s)       
     def initialize(tempo_or_input, options = {})
       @event = Event.new
       initialize_clock(tempo_or_input, options.fetch(:resolution, 128), :outputs => options[:outputs])
     end
 
+    # Stop the clock
     def stop
       @clock.stop
     end
 
+    # Start the clock
+    # @param [Hash] options
+    # @option options [Boolean] :blocking Whether to run in the foreground (also :focus, :foreground)
+    # @option options [Boolean] :suppress_clock Whether this clock is a sync-slave
+    # @return [Boolean]
     def start(options = {})
       clock_options = {}
-      clock_options[:background] = true unless !!options[:focus] || !!options[:foreground]
+      clock_options[:background] = true unless !!options[:focus] || !!options[:foreground] || !!options[:blocking]
       @clock.start(clock_options) unless !!options[:suppress_clock]
       Thread.abort_on_exception = true
+      true
     end
 
     private

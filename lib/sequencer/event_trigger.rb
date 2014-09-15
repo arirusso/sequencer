@@ -22,7 +22,7 @@ module Sequencer
     # @param [Object] data Data for the current sequence step 
     # @return [Boolean]
     def reset?(pointer, data)
-      !@reset.nil? && @reset.call(data)
+      !@reset.nil? && @reset.call(pointer, data)
     end
 
     # Whether the rest event should fire
@@ -30,7 +30,7 @@ module Sequencer
     # @param [Object] data Data for the current sequence step 
     # @return [Boolean]
     def rest?(pointer, data)
-      !@reset.nil? && @reset.call(data)
+      !@rest.nil? && @rest.call(pointer, data)
     end
 
     # Set the stop trigger. When true, the sequencer will stop
@@ -45,15 +45,16 @@ module Sequencer
     # @param [Object] data Data for the current sequence step 
     # @return [Boolean]
     def stop?(pointer, data)
-      !@stop.nil? && @stop.call(data)
+      !@stop.nil? && @stop.call(pointer, data)
     end
         
     # Shortcut to trigger a rest event on a given interval of ticks
     # @param [Fixnum, nil] num The number of ticks or nil to cancel existing triggers
     # @return [Fixnum, nil]
     def rest_every(num)
-      @rest.clear
-      unless num.nil?
+      if num.nil?
+        @rest = nil
+      else
         rest { |pointer| pointer % num == 0 }
         num
       end
@@ -63,8 +64,9 @@ module Sequencer
     # @param [Fixnum, nil] num The number of ticks or nil to cancel existing triggers
     # @return [Fixnum, nil]
     def reset_every(num)
-      @reset.clear
-      unless num.nil?
+      if num.nil?
+        @reset = nil
+      else
         reset { |pointer| pointer % num == 0 }
         num
       end

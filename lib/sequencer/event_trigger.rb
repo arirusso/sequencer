@@ -18,9 +18,18 @@ module Sequencer
     end
 
     # Whether the reset event should fire
-     # @param [Object] data Data for the current sequence step 
+    # @param [Fixnum] pointer The sequencer pointer
+    # @param [Object] data Data for the current sequence step 
     # @return [Boolean]
-    def reset?(data)
+    def reset?(pointer, data)
+      !@reset.nil? && @reset.call(data)
+    end
+
+    # Whether the rest event should fire
+    # @param [Fixnum] pointer The sequencer pointer
+    # @param [Object] data Data for the current sequence step 
+    # @return [Boolean]
+    def rest?(pointer, data)
       !@reset.nil? && @reset.call(data)
     end
 
@@ -32,32 +41,31 @@ module Sequencer
     end
 
     # Whether to fire the stop event
+    # @param [Fixnum] pointer The sequencer pointer
     # @param [Object] data Data for the current sequence step 
     # @return [Boolean]
-    def stop?(data)
+    def stop?(pointer, data)
       !@stop.nil? && @stop.call(data)
     end
         
-    # Bind an event when the instrument plays a rest on every given beat
-    # Passing in nil will cancel any existing rest events 
-    # @param [Fixnum] num The number of recurring beats to rest on
+    # Shortcut to trigger a rest event on a given interval of ticks
+    # @param [Fixnum, nil] num The number of ticks or nil to cancel existing triggers
     # @return [Fixnum, nil]
     def rest_every(num)
-      if num.nil?
-        @rest_when = nil
-      else
-        rest_when { |step| step.pointer % num == 0 }
+      @rest.clear
+      unless num.nil?
+        rest { |pointer| pointer % num == 0 }
         num
       end
     end
 
-    # Bind an event where the instrument resets on every <em>num<em> beat
-    # passing in nil will cancel any reset events 
+    # Shortcut to trigger a reset even on a given interval of ticks
+    # @param [Fixnum, nil] num The number of ticks or nil to cancel existing triggers
+    # @return [Fixnum, nil]
     def reset_every(num)
-      if num.nil?
-        @reset_when = nil
-      else
-        reset_when { |step| step.pointer % num == 0 }
+      @reset.clear
+      unless num.nil?
+        reset { |pointer| pointer % num == 0 }
         num
       end
     end

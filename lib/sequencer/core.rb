@@ -40,11 +40,11 @@ module Sequencer
     def perform(sequence)
       data = sequence.at(@pointer)
       @event.do_next(@pointer, data) if @event.next?(@pointer)
-      if @trigger.stop?(data)
+      if @trigger.stop?(@pointer, data)
         @event.do_stop
         false
       else
-        reset_pointer if @trigger.reset?(data)
+        reset_pointer if @trigger.reset?(@pointer, data)
         @event.do_perform(data)
         true
       end

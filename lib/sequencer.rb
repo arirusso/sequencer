@@ -19,7 +19,6 @@ require "sequencer/core"
 require "sequencer/event"
 require "sequencer/event_trigger"
 require "sequencer/loop"
-require "sequencer/pointer"
 require "sequencer/sync"
 
 module Sequencer

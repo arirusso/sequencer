@@ -8,7 +8,7 @@ module Sequencer
     def initialize
       @event = Event.new
       @loop = Loop.new
-      @pointer = Pointer.new
+      @pointer = 0
       @trigger = EventTrigger.new
     end
 
@@ -26,7 +26,7 @@ module Sequencer
       if reset_pointer?(:length => sequence.length)
         reset_pointer
       else
-        @pointer.step
+        @pointer += 1
       end
       @event.do_step
       true
@@ -37,7 +37,7 @@ module Sequencer
     # @param [Array] sequence
     # @return [Boolean] True if perform event was fired
     def perform(sequence)
-      data = sequence.at(@pointer.to_i)
+      data = sequence.at(@pointer)
       if @trigger.stop?(data)
         @event.do_stop
         false
@@ -51,14 +51,14 @@ module Sequencer
     end
 
     def reset_pointer
-      @pointer.reset(@loop.range)
+      @pointer = @loop.start
       @loop.step
     end
 
     private
 
     def reset_pointer?(options = {})
-      !@loop.disabled? && !@loop.include?(@pointer.next, :length => options[:length])
+      !@loop.disabled? && !@loop.include?(@pointer + 1, :length => options[:length])
     end
   
   end

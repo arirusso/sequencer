@@ -17,6 +17,10 @@ module Sequencer
       @range = to_range(value)
     end
 
+    def start
+      default? ? 0 : @range.begin
+    end
+
     def step
       @count += 1
     end

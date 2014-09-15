@@ -60,9 +60,8 @@ module Sequencer
         if block_given?
           @tick.clear
           @tick << block
-        else
-          @tick
         end
+        @tick
       end
 
       # Fire the tick event callback

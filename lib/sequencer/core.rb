@@ -40,7 +40,7 @@ module Sequencer
     # @return [Boolean] True if perform event was fired
     def perform(sequence)
       data = sequence.at(@pointer)
-      @event.do_next(data) if @event.next?(@pointer)
+      @event.do_next(@pointer, data) if @event.next?(@pointer)
       if @trigger.stop?(data)
         @event.do_stop
         false

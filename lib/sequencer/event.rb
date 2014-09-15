@@ -3,60 +3,82 @@ module Sequencer
   # Events that are fired by the sequencer
   class Event
 
+    def initialize
+      @next = {}
+      @perform = []
+      @step = []
+      @stop = []
+    end
+
     def next(pointer = nil, &block)
-      @next = { 
-        :pointer => pointer,
-        :proc => block
-      }
+      if block_given?
+        @next[pointer] ||= []
+        @next[pointer] << block
+      end
+      hash
     end
 
     def next?(pointer = nil)
-      !@next.nil? && @next[:pointer] == pointer
+      !@next[pointer].nil?
     end
 
-    def do_next(data)
-      @next[:proc].call(data)
-      @next = nil
+    def do_next(pointer, data)
+      keys = [pointer, nil]
+      callbacks = keys.map { |key| @next.delete(key) }.flatten.compact
+      callbacks.each(&:call)
+      true
     end
 
     # Set the step event
     # @param [Proc] block
     # @return [Proc]
     def step(&block)
-      @step = block
+      if block_given?
+        @step.clear
+        @step << block
+      end
+      @step
     end
 
-    # Fire the step event
+    # Fire the step events
     # @return [Boolean]
     def do_step
-      !@step.nil? && @step.call
+      !@step.empty? && @step.map(:call)
     end
 
-    # Set the stop event
+    # Access the stop events
     # @param [Proc] block
     # @return [Proc]
     def stop(&block)
-      @stop = block
+      if block_given?
+        @stop.clear
+        @stop << block
+      end
+      @stop
     end
 
     # Fire the stop event
     # @return [Boolean]
     def do_stop
-      !@stop.nil? && @stop.call
+      @stop.map(&:call)
     end
 
     # Set the perform event
     # @param [Proc] block
     # @return [Proc]
     def perform(&block)
-      @perform = block
+      if block_given?
+        @perform.clear
+        @perform << block
+      end
+      @perform
     end
 
     # Fire the perform event
     # @param [Object] data Data for the current sequence step 
     # @return [Boolean]
     def do_perform(data)
-      !@perform.nil? && @perform.call(data)
+      @perform.map { |callback| callback.call(data) }
     end
                     
   end

@@ -20,7 +20,7 @@ module Sequencer
       perform(sequence) && step(sequence)
     end
 
-    # Step the sequencer and fire the step event
+    # Step the sequencer and fire Event#step event
     # @param [Array] sequence
     # @return [Boolean]
     def step(sequence)
@@ -33,10 +33,17 @@ module Sequencer
       true
     end
 
-    # If a stop is triggered, stop. Otherwise if reset is triggered, reset. Finally,
-    # fire the perform event on the current step of the sequence
+    # Represents performance of a single sequence frame
+    #
+    # Order of events:
+    #
+    # 1. If Event#next for the current pointer, fire
+    # 2. If EventTrigger#stop, fire Event#stop, otherwise:
+    #   3. If EventTrigger#reset, fire Event#reset
+    #   4. Fire Event#perform with the sequence frame
+    # 
     # @param [Array] sequence
-    # @return [Boolean] True if perform event was fired
+    # @return [Boolean] Whether Event#perform event was fired
     def perform(sequence)
       data = sequence.at(@pointer)
       @event.do_next(@pointer, data) if @event.next?(@pointer)

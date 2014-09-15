@@ -19,6 +19,6 @@ require "sequencer/loop"
 
 module Sequencer
   
-  VERSION = "0.0.3"
+  VERSION = "0.0.4"
   
 end

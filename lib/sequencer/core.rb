@@ -50,12 +50,18 @@ module Sequencer
       end
     end
 
+    # Set the pointer to the loop start point
+    # @return [Fixnum]
     def reset_pointer
       @pointer = @loop.next
     end
 
     private
 
+    # Is the pointer at the point where it needs to be reset?
+    # @param [Hash] options
+    # @option options [Fixnum] :length The length of the sequence (used when the default loop is active)
+    # @return [Boolean]
     def reset_pointer?(options = {})
       !@loop.disabled? && !@loop.in_bounds?(@pointer + 1, :length => options[:length])
     end

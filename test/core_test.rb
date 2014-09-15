@@ -15,15 +15,15 @@ class Sequencer::CoreTest < Test::Unit::TestCase
       end
 
       should "move to next" do  
-        assert_equal 0, @sequencer.state.pointer
+        assert_equal 0, @sequencer.pointer
         @sequencer.exec(@sequence)
-        assert_equal 1, @sequencer.state.pointer
+        assert_equal 1, @sequencer.pointer
       end
 
       should "do repeat" do
-        @sequencer.state.pointer = @sequence.length - 1
+        @sequencer.pointer = @sequence.length - 1
         @sequencer.exec(@sequence)
-        assert_equal 0, @sequencer.state.pointer
+        assert_equal 0, @sequencer.pointer
       end
 
       should "stop" do
@@ -34,21 +34,21 @@ class Sequencer::CoreTest < Test::Unit::TestCase
       end
 
       should "reset and fire event" do
-        @sequencer.state.pointer = 3
+        @sequencer.pointer = 3
         @sequencer.trigger.expects(:stop?).once.returns(false)
         @sequencer.trigger.expects(:reset?).once.returns(true)
         @sequencer.event.expects(:do_perform).once
         @sequencer.exec(@sequence)
-        assert_equal 1, @sequencer.state.pointer
+        assert_equal 1, @sequencer.pointer
       end
 
       should "fire event" do
-        @sequencer.state.pointer = 2
+        @sequencer.pointer = 2
         @sequencer.trigger.expects(:stop?).once.returns(false)
         @sequencer.trigger.expects(:reset?).once.returns(false)
         @sequencer.event.expects(:do_perform).once
         @sequencer.exec(@sequence)
-        assert_equal 3, @sequencer.state.pointer
+        assert_equal 3, @sequencer.pointer
       end
 
     end
@@ -61,15 +61,15 @@ class Sequencer::CoreTest < Test::Unit::TestCase
       end
 
       should "move to next" do  
-        assert_equal 0, @sequencer.state.pointer
+        assert_equal 0, @sequencer.pointer
         @sequencer.step(@sequence)
-        assert_equal 1, @sequencer.state.pointer
+        assert_equal 1, @sequencer.pointer
       end
 
       should "do repeat" do
-        @sequencer.state.pointer = @sequence.length - 1
+        @sequencer.pointer = @sequence.length - 1
         @sequencer.step(@sequence)
-        assert_equal 0, @sequencer.state.pointer
+        assert_equal 0, @sequencer.pointer
       end
 
     end
@@ -88,21 +88,21 @@ class Sequencer::CoreTest < Test::Unit::TestCase
       end
 
       should "reset and fire event" do
-        @sequencer.state.pointer = 3
+        @sequencer.pointer = 3
         @sequencer.trigger.expects(:stop?).once.returns(false)
         @sequencer.trigger.expects(:reset?).once.returns(true)
         @sequencer.event.expects(:do_perform).once
         @sequencer.perform(@sequence)
-        assert_equal 0, @sequencer.state.pointer
+        assert_equal 0, @sequencer.pointer
       end
 
       should "fire event" do
-        @sequencer.state.pointer = 3
+        @sequencer.pointer = 3
         @sequencer.trigger.expects(:stop?).once.returns(false)
         @sequencer.trigger.expects(:reset?).once.returns(false)
         @sequencer.event.expects(:do_perform).once
         @sequencer.perform(@sequence)
-        assert_equal 3, @sequencer.state.pointer
+        assert_equal 3, @sequencer.pointer
       end
 
     end
@@ -115,8 +115,8 @@ class Sequencer::CoreTest < Test::Unit::TestCase
         @sequencer.event.stop { @clock.stop }
         @sequence = [1,2,3,4]
         @cache = []
-        @sequencer.event.perform { |state, data| @cache << data }
-        @sequencer.trigger.stop { |state| state.repeat == 1 }
+        @sequencer.event.perform { | data| @cache << data }
+        @sequencer.trigger.stop { @sequencer.loop.count == 1 }
         @clock.start(:focus => true)
       end
 

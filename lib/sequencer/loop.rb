@@ -37,7 +37,7 @@ module Sequencer
       @is_disabled = true
     end
 
-    def include?(num, options = {})
+    def in_bounds?(num, options = {})
       length = options[:length]
       range = default? ? 0..(length-1) : @range
       range.include?(num)

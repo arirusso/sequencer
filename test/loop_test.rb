@@ -24,6 +24,32 @@ class Sequencer::LoopTest < Test::Unit::TestCase
 
     end
 
+     context "#start" do
+
+      context "default loop" do
+
+        should "always have 0 as start" do
+          assert @loop.default?
+          assert_equal 0, @loop.start
+        end
+
+      end
+
+      context "custom loop" do
+
+        setup do
+          @loop.range = 3..6
+        end
+
+        should "have custom start point" do
+          refute @loop.default?
+          assert_equal 3, @loop.start
+        end
+
+      end
+
+    end
+
     context "#in_bounds?" do
 
       context "default loop" do

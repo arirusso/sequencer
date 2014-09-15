@@ -3,6 +3,25 @@ module Sequencer
   # Events that are fired by the sequencer
   class Event
 
+    def next(pointer = nil, &block)
+      @next = { 
+        :pointer => pointer,
+        :proc => block
+      }
+    end
+
+    def clear_next
+      @next = nil
+    end
+
+    def next?(pointer = nil)
+      !@next.nil? && @next[:pointer] == num
+    end
+
+    def do_next(data)
+      @next.call(data)
+    end
+
     # Set the step event
     # @param [Proc] block
     # @return [Proc]

@@ -3,7 +3,6 @@ module Sequencer
   # A light wrapper for Topaz::Tempo that adds some event handling
   class Clock
 
-    include Syncable
     extend Forwardable
 
     attr_reader :event
@@ -31,9 +30,9 @@ module Sequencer
 
     private
 
-    # Action taken by the clock on a tick.  Activates queued slaves when appropriate and fires the tick event
+    # Action taken by the clock on a tick.  Fires the tick event
     def on_tick
-      activate_sync { @event.do_tick }
+      @event.do_tick
     end
 
     # Instantiate the underlying clock object
@@ -50,17 +49,26 @@ module Sequencer
     # Clock event callbacks
     class Event
 
-      # Set the tick event callback
+      def initialize
+        @tick = []
+      end
+
+      # Access the tick event callback
       # @param [Proc] block
       # @return [Proc]
       def tick(&block)
-        @tick = block
+        if block_given?
+          @tick.clear
+          @tick << block
+        else
+          @tick
+        end
       end
 
       # Fire the tick event callback
       # @return [Boolean]
       def do_tick
-        !@tick.nil? && @tick.call
+        !@tick.empty? && @tick.map(&:call)
       end
 
     end

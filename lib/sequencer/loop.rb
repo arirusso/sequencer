@@ -21,8 +21,9 @@ module Sequencer
       default? ? 0 : @range.begin
     end
 
-    def step
+    def next
       @count += 1
+      start
     end
 
     def default?

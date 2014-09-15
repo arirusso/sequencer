@@ -51,8 +51,7 @@ module Sequencer
     end
 
     def reset_pointer
-      @pointer = @loop.start
-      @loop.step
+      @pointer = @loop.next
     end
 
     private

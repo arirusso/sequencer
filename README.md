@@ -2,17 +2,17 @@
 
 Perform a sequence of events at tempo
 
-The tempo clock is MIDI syncable by way of [topaz](http://github.com/arirusso/topaz).  However, [midi-sequencer](http://github.com/arirusso/midi-sequencer) is a wrapper for this gem that adds additional MIDI handling capabilities.
+The tempo clock is MIDI syncable by way of [topaz](http://github.com/arirusso/topaz).
 
 This is used by [diamond](http://github.com/arirusso/diamond)
 
 ## Installation
 
-`gem install simple-sequencer`
+`gem install basic-sequencer`
   
   or with Bundler, add this to your Gemfile
   
-`gem "simple-sequencer"` 
+`gem "basic-sequencer"` 
 
 ## Documentation
 

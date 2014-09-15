@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 $:.unshift File.join( File.dirname( __FILE__ ), '../lib')
 
-# A sequencer that loops through the sequence ten times, printing the current step
+# Sync two sequencers to the same clock
 
 require "sequencer"
 
@@ -13,7 +13,9 @@ sequencers = [Sequencer.new, Sequencer.new]
 clock = Sequencer::Clock.new(120)
 clock.event.tick { sequencers[0].exec(sequence_1) }
 
-clock.event.tick << Proc.new { sequencers[1].exec(sequence_2) }
+sequencers[0].event.next(3) do
+  clock.event.tick << Proc.new { sequencers[1].exec(sequence_2) }
+end
 
 sequencers.each { |sequencer| sequencer.trigger.stop { sequencer.loop.count == 10 } }
 sequencers.each { |sequencer| sequencer.event.perform { |data| p data } }

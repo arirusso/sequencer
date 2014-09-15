@@ -10,16 +10,13 @@ module Sequencer
       }
     end
 
-    def clear_next
-      @next = nil
-    end
-
     def next?(pointer = nil)
-      !@next.nil? && @next[:pointer] == num
+      !@next.nil? && @next[:pointer] == pointer
     end
 
     def do_next(data)
-      @next.call(data)
+      @next[:proc].call(data)
+      @next = nil
     end
 
     # Set the step event

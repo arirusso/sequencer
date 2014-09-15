@@ -3,12 +3,13 @@ module Sequencer
   # The core sequencer
   class Core
 
-    attr_reader :event, :trigger, :state
+    attr_reader :event, :loop, :trigger, :pointer
 
-    def initialize(options = {})
+    def initialize
       @event = Event.new
+      @loop = Loop.new
+      @pointer = Pointer.new
       @trigger = EventTrigger.new
-      @state = State.new(:loop => options[:loop])
     end
 
     # Execute a single cycle of sequencing (perform and step)
@@ -22,8 +23,12 @@ module Sequencer
     # @param [Array] sequence
     # @return [Boolean]
     def step(sequence)
-      @state.step(:length => sequence.length)
-      @event.do_step(@state)
+      if reset_pointer?(:length => sequence.length)
+        reset_pointer
+      else
+        @pointer.step
+      end
+      @event.do_step
       true
     end
 
@@ -32,21 +37,30 @@ module Sequencer
     # @param [Array] sequence
     # @return [Boolean] True if perform event was fired
     def perform(sequence)
-      data = sequence.at(@state.pointer)
-      unless data.nil?
-        if @trigger.stop?(@state, data)
-          @event.do_stop(@state)
-          false
-        else
-          if @trigger.reset?(@state, data)
-            @state.reset 
-          end
-          @event.do_perform(@state, data)
-          true
+      data = sequence.at(@pointer.to_i)
+      if @trigger.stop?(data)
+        @event.do_stop
+        false
+      else
+        if @trigger.reset?(data)
+          @pointer.reset(@loop.range)
         end
+        @event.do_perform(data)
+        true
       end
     end
 
+    def reset_pointer
+      @pointer.reset(@loop.range)
+      @loop.step
+    end
+
+    private
+
+    def reset_pointer?(options = {})
+      !@loop.disabled? && !@loop.include?(@pointer.next, :length => options[:length])
+    end
+  
   end
 
   # Shortcut to the Core constructor

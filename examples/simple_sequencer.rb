@@ -8,13 +8,13 @@ require "sequencer"
 sequence = [1,2,3,4]
 sequencer = Sequencer.new
 
-sequencer.state.loop = 0..2
+sequencer.loop.range = 0..5
 
 clock = Sequencer::Clock.new(120)
 clock.event.tick { sequencer.exec(sequence) }
 
-sequencer.trigger.stop { |state| state.loop_count == 10 }
-sequencer.event.perform { |state, data| puts data }
+sequencer.trigger.stop { sequencer.loop.count == 10 }
+sequencer.event.perform { |data| p data }
 sequencer.event.stop { clock.stop }
 
 clock.start(:blocking => true)

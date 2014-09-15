@@ -11,10 +11,9 @@ module Sequencer
     end
 
     # Fire the step event
-    # @param [State] The sequencer state
     # @return [Boolean]
-    def do_step(state)
-      !@step.nil? && @step.call(state)
+    def do_step
+      !@step.nil? && @step.call
     end
 
     # Set the stop event
@@ -25,10 +24,9 @@ module Sequencer
     end
 
     # Fire the stop event
-    # @param [State] The sequencer state
     # @return [Boolean]
-    def do_stop(state)
-      !@stop.nil? && @stop.call(state)
+    def do_stop
+      !@stop.nil? && @stop.call
     end
 
     # Set the perform event
@@ -39,11 +37,10 @@ module Sequencer
     end
 
     # Fire the perform event
-    # @param [State] state The sequencer state
     # @param [Object] data Data for the current sequence step 
     # @return [Boolean]
-    def do_perform(state, data)
-      !@perform.nil? && @perform.call(state, data)
+    def do_perform(data)
+      !@perform.nil? && @perform.call(data)
     end
                     
   end

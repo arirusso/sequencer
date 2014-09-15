@@ -18,11 +18,10 @@ module Sequencer
     end
 
     # Whether the reset event should fire
-    # @param [State] state The sequencer state
-    # @param [Object] data Data for the current sequence step 
+     # @param [Object] data Data for the current sequence step 
     # @return [Boolean]
-    def reset?(state, data)
-      !@reset.nil? && @reset.call(state, data)
+    def reset?(data)
+      !@reset.nil? && @reset.call(data)
     end
 
     # Set the stop trigger. When true, the sequencer will stop
@@ -33,11 +32,10 @@ module Sequencer
     end
 
     # Whether to fire the stop event
-    # @param [State] state The sequencer state
     # @param [Object] data Data for the current sequence step 
     # @return [Boolean]
-    def stop?(state, data)
-      !@stop.nil? && @stop.call(state, data)
+    def stop?(data)
+      !@stop.nil? && @stop.call(data)
     end
         
     # Bind an event when the instrument plays a rest on every given beat

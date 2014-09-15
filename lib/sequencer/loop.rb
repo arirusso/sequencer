@@ -55,8 +55,6 @@ module Sequencer
       when Range then value
       end
     end
-
-
     
   end
 end

@@ -6,21 +6,15 @@ module Sequencer
     include Syncable
     extend Forwardable
 
-    attr_reader :event, :trigger
-    def_delegators :@clock, :pause, :unpause
+    attr_reader :event
+    def_delegators :@clock, :pause, :stop, :unpause
 
     # @param [Fixnum, UniMIDI::Input] tempo_or_input
     # @param [Hash] options
-    # @option options [Array<UniMIDI::Output>, UniMIDI::Output] :outputs MIDI output device(s)       
+    # @option options [Array<UniMIDI::Output>, UniMIDI::Output] :outputs MIDI output device(s)     
     def initialize(tempo_or_input, options = {})
       @event = Event.new
-      @trigger = EventTrigger.new
       initialize_clock(tempo_or_input, options.fetch(:resolution, 128), :outputs => options[:outputs])
-    end
-
-    # Stop the clock
-    def stop
-      @clock.stop
     end
 
     # Start the clock
@@ -30,10 +24,9 @@ module Sequencer
     # @return [Boolean]
     def start(options = {})
       clock_options = {}
-      clock_options[:background] = ![:blocking, :focus, :foreground].any? { |k| !!options[k] }
+      clock_options[:background] = ![:blocking, :focus, :foreground].any? { |key| !!options[key] }
       @clock.start(clock_options) unless !!options[:suppress_clock]
       Thread.abort_on_exception = true
-      true
     end
 
     private
@@ -47,18 +40,11 @@ module Sequencer
     # @param [Fixnum, UniMIDI::Input] tempo_or_input
     # @param [Fixnum] resolution
     # @param [Hash] options
-    # @option options [Array<UniMIDI::Output>, UniMIDI::Output] :outputs MIDI output device(s)  
+    # @option options [Array<UniMIDI::Output>, UniMIDI::Output] :outputs MIDI output device(s) 
     def initialize_clock(tempo_or_input, resolution, options = {})
       @clock = Topaz::Tempo.new(tempo_or_input, :midi => options[:outputs]) 
       @clock.interval = @clock.interval * (resolution / @clock.interval)
       @clock.on_tick { on_tick }
-    end
-
-    # Callbacks that will, when evaluated true, trigger clock events
-    class EventTrigger
-
-      include Syncable::EventTrigger
-
     end
 
     # Clock event callbacks
@@ -78,6 +64,5 @@ module Sequencer
       end
 
     end
-
   end
 end

@@ -3,25 +3,6 @@ module Sequencer
   # Included by Clock to add syncing capability
   module Syncable
 
-    # Callbacks that, when evaluated true, will trigger sync actions
-    module EventTrigger
-
-      # Set the sync trigger callback. When this syncable is in the slave queue and this callback 
-      # evaluates true, sync will become active
-      # @param [Proc] block
-      # @return [Proc]
-      def sync(&block)
-        @sync = block
-      end
-
-      # Whether sync should become active for this slave
-      # @return [Boolean]
-      def sync?
-        !@sync.nil? && @sync.call
-      end
-
-    end
-
     # Is this clock master of the given syncable?
     # @param [Syncable] slave
     # @return [Boolean]
@@ -78,9 +59,13 @@ module Sequencer
     # Activate sync on this syncable's slaves
     # The passed in callback is yielded to during the process
     def activate_sync(&block)
-      sync_immediate if @trigger.sync?
-      yield
+      sync_immediate if sync_immediate?
+      yield if block_given?
       sync_enqueued
+    end
+
+    def sync_immediate?
+      respond_to?(:activate_sync?) && send(:activate_sync?)
     end
 
     # Start sync for any enqueued slaves that were specified to start given the current state

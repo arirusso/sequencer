@@ -4,12 +4,14 @@ module Sequencer
   class Core
 
     attr_reader :event, :loop, :trigger, :pointer
+    attr_accessor :activate_sync_step
 
     def initialize
       @event = Event.new
       @loop = Loop.new
       @pointer = 0
       @trigger = EventTrigger.new
+      @activate_sync_step = @loop.start
     end
 
     # Execute a single cycle of sequencing (perform and step)
@@ -60,7 +62,13 @@ module Sequencer
     def reset_pointer?(options = {})
       !@loop.disabled? && !@loop.include?(@pointer + 1, :length => options[:length])
     end
-  
+
+    # Should sync be activated on the current step?
+    # @return [Boolean]
+    def activate_sync?
+      @pointer == @activate_sync_step
+    end
+
   end
 
   # Shortcut to the Core constructor

@@ -10,6 +10,10 @@ module Sequencer
       @stop = []
     end
 
+    # Fire an event the next time the pointer reaches the given number
+    # @param [Fixnum, nil] pointer The pointer number when the callback should be fired.  If nil, it will be fired whenever Event#do_next is called.
+    # @param [Proc] block
+    # @return [Array<Proc>]
     def next(pointer = nil, &block)
       @next[pointer] ||= []
       if block_given?
@@ -19,10 +23,16 @@ module Sequencer
       @next[pointer]
     end
 
+    # Whether any callbacks exist for the given pointer (or nil)
+    # @param [Fixnum, nil] pointer
+    # @return [Boolean]
     def next?(pointer = nil)
       !@next[pointer].nil?
     end
 
+    # @param [Fixnum, nil] pointer The pointer number (or nil) to fire callbacks for.
+    # @param [Object] data The data for the current pointer
+    # @return [Array<Object>]
     def do_next(pointer, data)
       keys = [pointer, nil]
       callbacks = keys.map { |key| @next.delete(key) }.flatten.compact

@@ -11,11 +11,12 @@ module Sequencer
     end
 
     def next(pointer = nil, &block)
+      @next[pointer] ||= []
       if block_given?
-        @next[pointer] ||= []
+        @next[pointer].clear
         @next[pointer] << block
       end
-      hash
+      @next[pointer]
     end
 
     def next?(pointer = nil)
@@ -25,8 +26,7 @@ module Sequencer
     def do_next(pointer, data)
       keys = [pointer, nil]
       callbacks = keys.map { |key| @next.delete(key) }.flatten.compact
-      callbacks.each(&:call)
-      true
+      callbacks.map(&:call)
     end
 
     # Set the step event
@@ -43,7 +43,7 @@ module Sequencer
     # Fire the step events
     # @return [Boolean]
     def do_step
-      !@step.empty? && @step.map(:call)
+      @step.map(&:call)
     end
 
     # Access the stop events

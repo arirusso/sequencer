@@ -10,22 +10,24 @@ module Sequencer
 
     # @param [Fixnum, UniMIDI::Input] tempo_or_input
     # @param [Hash] options
-    # @option options [Array<UniMIDI::Output>, UniMIDI::Output] :outputs (also: :output) MIDI output device(s)     
+    # @option options [Array<UniMIDI::Output>, UniMIDI::Output] :output (also: :outputs) MIDI output device(s)     
     def initialize(tempo_or_input, options = {})
       @event = Event.new
-      outputs = options[:outputs] || options[:output]
+      outputs = options[:output] || options[:outputs] 
       resolution = options.fetch(:resolution, 128)
       initialize_clock(tempo_or_input, resolution, :outputs => outputs)
     end
 
     # Start the clock
     # @param [Hash] options
+    # @option options [Boolean] :background Whether to run in the background
     # @option options [Boolean] :blocking Whether to run in the foreground (also :focus, :foreground)
     # @option options [Boolean] :suppress_clock Whether this clock is a sync-slave
     # @return [Boolean]
     def start(options = {})
       clock_options = {}
-      clock_options[:background] = ![:blocking, :focus, :foreground].any? { |key| !!options[key] }
+      clock_options[:background] = !!options[:background]
+      clock_options[:background] ||= ![:blocking, :focus, :foreground].any? { |key| !!options[key] }
       @clock.start(clock_options) unless !!options[:suppress_clock]
       Thread.abort_on_exception = true
     end
@@ -41,9 +43,9 @@ module Sequencer
     # @param [Fixnum, UniMIDI::Input] tempo_or_input
     # @param [Fixnum] resolution
     # @param [Hash] options
-    # @option options [Array<UniMIDI::Output>, UniMIDI::Output] :outputs MIDI output device(s) 
+    # @option options [Array<UniMIDI::Output>, UniMIDI::Output] :output MIDI output device(s) 
     def initialize_clock(tempo_or_input, resolution, options = {})
-      @clock = Topaz::Tempo.new(tempo_or_input, :midi => options[:outputs]) 
+      @clock = Topaz::Tempo.new(tempo_or_input, :midi => options[:output]) 
       @clock.interval = @clock.interval * (resolution / @clock.interval)
       @clock.on_tick { on_tick }
     end

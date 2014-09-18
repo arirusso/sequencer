@@ -10,10 +10,12 @@ module Sequencer
 
     # @param [Fixnum, UniMIDI::Input] tempo_or_input
     # @param [Hash] options
-    # @option options [Array<UniMIDI::Output>, UniMIDI::Output] :outputs MIDI output device(s)     
+    # @option options [Array<UniMIDI::Output>, UniMIDI::Output] :outputs (also: :output) MIDI output device(s)     
     def initialize(tempo_or_input, options = {})
       @event = Event.new
-      initialize_clock(tempo_or_input, options.fetch(:resolution, 128), :outputs => options[:outputs])
+      outputs = options[:outputs] || options[:output]
+      resolution = options.fetch(:resolution, 128)
+      initialize_clock(tempo_or_input, resolution, :outputs => outputs)
     end
 
     # Start the clock

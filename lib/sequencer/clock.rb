@@ -32,6 +32,30 @@ module Sequencer
       Thread.abort_on_exception = true
     end
 
+    # Add a MIDI clock output
+    # @param [Array<UniMIDI::Output>, UniMIDI::Output] output
+    # @return [Array<UniMIDI::Output>]
+    def add_midi_output(output)
+      outputs = [output].flatten
+      @clock.add_destination(outputs)
+      midi_outputs
+    end
+
+    # Remove a MIDI clock output
+    # @param [Array<UniMIDI::Output>, UniMIDI::Output] output
+    # @return [Array<UniMIDI::Output>]
+    def remove_midi_output(output)
+      outputs = [output].flatten
+      @clock.remove_destination(outputs)
+      midi_outputs
+    end
+
+    # The MIDI outputs
+    # @return [Array<UniMIDI::Output>]
+    def midi_outputs
+      @clock.destinations.map(&:output)
+    end
+
     private
 
     # Action taken by the clock on a tick.  Fires the tick event

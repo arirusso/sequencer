@@ -8,6 +8,23 @@ class Sequencer::ClockTest < Test::Unit::TestCase
       @clock = Sequencer::Clock.new(120)
     end
 
+    context "Clock#tempo" do
+
+      should "get tempo" do
+        assert_equal 120, @clock.tempo
+      end
+
+    end
+
+    context "Clock#tempo=" do
+
+      should "set tempo" do
+        @clock.tempo = 58
+        assert_equal 58, @clock.tempo
+      end
+
+    end
+
     context "Clock::Event#tick" do
 
       setup do

@@ -6,7 +6,7 @@ module Sequencer
     extend Forwardable
 
     attr_reader :event
-    def_delegators :@clock, :pause, :stop, :unpause
+    def_delegators :@clock, :pause, :stop, :tempo, :tempo=, :unpause
 
     # @param [Fixnum, UniMIDI::Input] tempo_or_input
     # @param [Hash] options

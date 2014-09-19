@@ -15,7 +15,7 @@ module Sequencer
       @event = Event.new
       outputs = options[:output] || options[:outputs] 
       resolution = options.fetch(:resolution, 128)
-      initialize_clock(tempo_or_input, resolution, :outputs => outputs)
+      initialize_clock(tempo_or_input, resolution, :output => outputs)
     end
 
     # Start the clock

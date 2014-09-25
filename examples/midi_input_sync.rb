@@ -14,8 +14,8 @@ clock = Sequencer::Clock.new(input)
 
 clock.event.tick { sequencer.exec(sequence) }
 
-sequencer.trigger.stop { |state| state.repeat == 20 }
-sequencer.event.perform { |state, data| puts data }
+sequencer.trigger.stop { sequencer.loop.count == 20 }
+sequencer.event.perform { |data| puts data }
 sequencer.event.stop { clock.stop }
 
 clock.start(:blocking => true)

@@ -8,42 +8,36 @@ class Sequencer::ClockTest < Test::Unit::TestCase
       @clock = Sequencer::Clock.new(120)
     end
 
-    context "Clock#initialize" do
+    context "Clock#midi_output" do
 
       should "get MIDI output" do
         output = Object.new
-        @clock = Sequencer::Clock.new(120, :output => output)
-        assert_not_nil @clock.midi_outputs
-        assert_not_empty @clock.midi_outputs
-        assert @clock.midi_outputs.include?(output)
+        @clock = Sequencer::Clock.new(120, :midi => output)
+        assert_not_nil @clock.midi_output.devices
+        assert_not_empty @clock.midi_output.devices
+        assert @clock.midi_output.devices.include?(output)
       end
-
-    end
-
-    context "Clock#add_midi_output" do
 
       should "add MIDI output" do
         output = Object.new
-        refute @clock.midi_outputs.include?(output)
-        @clock.add_midi_output(output)
-        assert_not_nil @clock.midi_outputs
-        assert_not_empty @clock.midi_outputs
-        assert @clock.midi_outputs.include?(output)
+        refute @clock.midi_output.devices.include?(output)
+        @clock.midi_output.devices << output
+        assert_not_nil @clock.midi_output.devices
+        assert_not_empty @clock.midi_output.devices
+        assert @clock.midi_output.devices.include?(output)
       end
-
-    end
-
-    context "Clock#remove_midi_output" do
 
       should "remove MIDI output" do
         output = Object.new
-        refute @clock.midi_outputs.include?(output)
-        @clock.add_midi_output(output)
-        assert_not_nil @clock.midi_outputs
-        assert_not_empty @clock.midi_outputs
-        assert @clock.midi_outputs.include?(output)
-        @clock.remove_midi_output(output)
-        refute @clock.midi_outputs.include?(output)
+        refute @clock.midi_output.devices.include?(output)
+        @clock.midi_output.devices << output
+        
+        assert_not_nil @clock.midi_output.devices
+        assert_not_empty @clock.midi_output.devices
+        assert @clock.midi_output.devices.include?(output)
+
+        @clock.midi_output.devices.delete(output)
+        refute @clock.midi_output.devices.include?(output)
       end
 
     end

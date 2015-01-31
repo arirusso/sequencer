@@ -1,6 +1,6 @@
 require "helper"
 
-class Sequencer::LoopTest < Test::Unit::TestCase
+class Sequencer::LoopTest < Minitest::Test
 
   context "Loop" do
 
@@ -85,5 +85,3 @@ class Sequencer::LoopTest < Test::Unit::TestCase
   end
 
 end
-
-

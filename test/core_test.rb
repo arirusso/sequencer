@@ -1,6 +1,6 @@
 require "helper"
 
-class Sequencer::CoreTest < Test::Unit::TestCase
+class Sequencer::CoreTest < Minitest::Test
 
   context "Core" do
 
@@ -14,7 +14,7 @@ class Sequencer::CoreTest < Test::Unit::TestCase
         @sequence = [1,2,3,4]
       end
 
-      should "move to next" do  
+      should "move to next" do
         assert_equal 0, @sequencer.pointer
         @sequencer.exec(@sequence)
         assert_equal 1, @sequencer.pointer
@@ -60,7 +60,7 @@ class Sequencer::CoreTest < Test::Unit::TestCase
         @sequencer.event.expects(:do_step).once
       end
 
-      should "move to next" do  
+      should "move to next" do
         assert_equal 0, @sequencer.pointer
         @sequencer.step(@sequence)
         assert_equal 1, @sequencer.pointer
@@ -130,4 +130,3 @@ class Sequencer::CoreTest < Test::Unit::TestCase
   end
 
 end
-

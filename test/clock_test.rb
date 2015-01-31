@@ -1,6 +1,6 @@
 require "helper"
 
-class Sequencer::ClockTest < Test::Unit::TestCase
+class Sequencer::ClockTest < Minitest::Test
 
   context "Clock" do
 
@@ -13,8 +13,8 @@ class Sequencer::ClockTest < Test::Unit::TestCase
       should "get MIDI output" do
         output = Object.new
         @clock = Sequencer::Clock.new(120, :midi => output)
-        assert_not_nil @clock.midi_output.devices
-        assert_not_empty @clock.midi_output.devices
+        refute_nil @clock.midi_output.devices
+        refute_empty @clock.midi_output.devices
         assert @clock.midi_output.devices.include?(output)
       end
 
@@ -22,8 +22,8 @@ class Sequencer::ClockTest < Test::Unit::TestCase
         output = Object.new
         refute @clock.midi_output.devices.include?(output)
         @clock.midi_output.devices << output
-        assert_not_nil @clock.midi_output.devices
-        assert_not_empty @clock.midi_output.devices
+        refute_nil @clock.midi_output.devices
+        refute_empty @clock.midi_output.devices
         assert @clock.midi_output.devices.include?(output)
       end
 
@@ -31,9 +31,9 @@ class Sequencer::ClockTest < Test::Unit::TestCase
         output = Object.new
         refute @clock.midi_output.devices.include?(output)
         @clock.midi_output.devices << output
-        
-        assert_not_nil @clock.midi_output.devices
-        assert_not_empty @clock.midi_output.devices
+
+        refute_nil @clock.midi_output.devices
+        refute_empty @clock.midi_output.devices
         assert @clock.midi_output.devices.include?(output)
 
         @clock.midi_output.devices.delete(output)
@@ -92,11 +92,9 @@ class Sequencer::ClockTest < Test::Unit::TestCase
         assert @flag
         assert @flag2
       end
-      
+
     end
 
   end
 
 end
-
-

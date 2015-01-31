@@ -1,6 +1,6 @@
 require "helper"
 
-class Sequencer::EventTriggerTest < Test::Unit::TestCase
+class Sequencer::EventTriggerTest < Minitest::Test
 
   context "EventTrigger" do
 
@@ -175,6 +175,3 @@ class Sequencer::EventTriggerTest < Test::Unit::TestCase
   end
 
 end
-
-
-

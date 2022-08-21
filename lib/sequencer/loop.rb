@@ -1,8 +1,8 @@
-module Sequencer
+# frozen_string_literal: true
 
+module Sequencer
   # Define a looping behavior for the sequencer
   class Loop
-
     attr_reader :count, :range
 
     def initialize
@@ -49,14 +49,14 @@ module Sequencer
       @is_disabled = true
     end
 
-    # Is the given pointer position in bounds of the loop? 
+    # Is the given pointer position in bounds of the loop?
     # @param [Fixnum] pointer The pointer position to compare bounds to
     # @param [Hash] options
     # @option options [Fixnum] :length The sequence length (required if default loop is being used)
     # @return [Boolean]
     def in_bounds?(pointer, options = {})
       length = options[:length]
-      range = default? ? 0..(length-1) : @range
+      range = default? ? 0..(length - 1) : @range
       range.include?(pointer)
     end
 
@@ -68,10 +68,9 @@ module Sequencer
     def to_range(value)
       case value
       when Array then (value[0]..value[1])
-      when Fixnum then (0..value)
+      when Integer then (0..value)
       when Range then value
       end
     end
-    
   end
 end

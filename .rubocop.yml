@@ -1,0 +1,6 @@
+AllCops:
+  TargetRubyVersion: 2.4
+Metrics/BlockLength:
+  IgnoredMethods: ['describe', 'context']
+Naming/FileName:
+  Enabled: false

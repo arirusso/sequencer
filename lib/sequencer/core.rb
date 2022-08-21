@@ -1,8 +1,9 @@
-module Sequencer 
+# frozen_string_literal: true
 
+# Perform a sequence of events at tempo
+module Sequencer
   # The core sequencer
   class Core
-
     attr_reader :event, :loop, :trigger
     attr_accessor :pointer
 
@@ -24,7 +25,7 @@ module Sequencer
     # @param [Array] sequence
     # @return [Boolean]
     def step(sequence)
-      if reset_pointer?(:length => sequence.length)
+      if reset_pointer?(length: sequence.length)
         reset_pointer
       else
         @pointer += 1
@@ -41,7 +42,7 @@ module Sequencer
     # 2. If EventTrigger#stop, fire Event#stop, otherwise:
     #   3. If EventTrigger#reset, fire Event#reset
     #   4. Fire Event#perform with the sequence frame
-    # 
+    #
     # @param [Array] sequence
     # @return [Boolean] Whether Event#perform event was fired
     def perform(sequence)
@@ -70,9 +71,8 @@ module Sequencer
     # @option options [Fixnum] :length The length of the sequence (used when the default loop is active)
     # @return [Boolean]
     def reset_pointer?(options = {})
-      !@loop.disabled? && !@loop.in_bounds?(@pointer + 1, :length => options[:length])
+      !@loop.disabled? && !@loop.in_bounds?(@pointer + 1, length: options[:length])
     end
-
   end
 
   # Shortcut to the Core constructor
@@ -80,5 +80,4 @@ module Sequencer
   def self.new
     Core.new
   end
-
 end
